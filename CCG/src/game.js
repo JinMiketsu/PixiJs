@@ -1,29 +1,29 @@
-import { Application, Assets, Sprite } from "pixi.js";
-import { GameScene } from "./scene/scene";
+import { Application, Container, } from "pixi.js";
+import { CollisionDetector } from "./collisionDetector/collisionDetector";
+import { gameConstants } from "./gameConstants";
+import { PlayScene } from "./scenes/gamePlayScene";
 
 export default class Game {
-    constructor() {
-        this.app = new Application({
-            width: 800,
-            height: 600,
-            backgroundColor: 0x1099bb,
-            resolution: window.devicePixelRatio || 1,
-        });
-        
-        document.body.appendChild(this.app.view);
-        this.gameContainer = new Container;
-        this.app.stage.addChild(this.gameContainer);
-        this.app.ticker.add(this.update, this);
-        this.initGameScene();
-    }
-    initGameScene() {
-        this.gameScene = new GameScene();
-        this.gameContainer.addChild(this.gameScene);
-    }
-    update(deltaTime){
-        this.gameScene.update(deltaTime);
-        
-      }
+  constructor(){
+    this.app = new Application({
+      width: gameConstants.WIDTH,
+      height: gameConstants.HEIGHT,
+    });
+    document.body.appendChild(this.app.view);
+    this.gameContainer = new Container;
+    this.app.stage.addChild(this.gameContainer);
+    this.app.ticker.add(this.update, this);
+    CollisionDetector.init();
+    this.initScene();
+  }
 
-  
+  initScene(){
+    this.playScene = new PlayScene;
+    this.gameContainer.addChild(this.playScene);
+  }
+
+  update(dt){
+    CollisionDetector.update();
+    this.playScene.update(dt);
+  }
 }
